@@ -1,4 +1,4 @@
-import 'package:duaempatperlapan/ui/widgets/murbles_area_widget.dart';
+import 'package:duaempatperlapan/ui/widgets/marbles_area_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'card_on_edge_widget.dart';
@@ -13,7 +13,7 @@ class DragAndDropAreaWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 20,
-        children: [CardOnEdgeWidget(), MurblesAreaWidget()],
+        children: [CardOnEdgeWidget(), MarblesAreaWidget()],
       ),
     );
   }

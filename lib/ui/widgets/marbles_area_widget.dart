@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MurblesAreaWidget extends StatelessWidget {
-  const MurblesAreaWidget({super.key});
+class MarblesAreaWidget extends StatelessWidget {
+  const MarblesAreaWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

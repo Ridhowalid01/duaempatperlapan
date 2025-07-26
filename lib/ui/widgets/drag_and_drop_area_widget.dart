@@ -8,13 +8,21 @@ class DragAndDropAreaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Expanded(
+    return Expanded(
       flex: 3,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        spacing: 15,
-        children: [CardOnEdgeWidget(), MarblesAreaWidget()],
-      ),
+      child: Stack(
+        children: [
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: CardOnEdgeWidget(),
+          ),
+          Positioned.fill(
+            child: MarblesAreaWidget(),
+          ),
+        ],
+      )
     );
   }
 }

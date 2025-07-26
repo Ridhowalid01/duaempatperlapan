@@ -7,34 +7,29 @@ import '../models/marble_model.dart';
 
 class MarbleController extends GetxController {
   final marbles = <MarbleModel>[].obs;
-  double marbleSize = 35.0;
+  final double marbleSize = 30.0;
+  final double spacing = 25.0;
+  final double leftPadding = 70.0;
   int _groupCounter = 0;
-
   List<MapEntry<int, MarbleModel>>? _draggingGroup;
-
-  double get spacing => marbleSize * 0.85;
 
   void generateRandomMarbles({
     required int count,
     required double maxWidth,
     required double maxHeight,
-    double size = 35,
-    double minDistance = 45,
+    double minDistance = 50,
   }) {
     marbles.clear();
     final random = Random();
-    List<Offset> positions = [];
+    final positions = <Offset>[];
     int tries = 0;
 
     while (positions.length < count && tries < 10000) {
-      final candidate = Offset(
-        random.nextDouble() * (maxWidth - size),
-        random.nextDouble() * (maxHeight - size),
-      );
+      final dx = leftPadding + random.nextDouble() * (maxWidth - leftPadding - marbleSize);
+      final dy = random.nextDouble() * (maxHeight - marbleSize);
+      final candidate = Offset(dx, dy);
 
-      if (positions.every(
-        (other) => (candidate - other).distance >= minDistance,
-      )) {
+      if (positions.every((other) => (candidate - other).distance >= minDistance)) {
         positions.add(candidate);
       }
 
@@ -48,107 +43,73 @@ class MarbleController extends GetxController {
 
   void updatePosition(int index, Offset newPosition) {
     final marble = marbles[index];
-    final connectedIndices = _findConnectedMarbles(index);
-    final groupId = _mergeGroups(connectedIndices);
+    final connected = _findConnectedMarbles(index);
+    final groupId = connected.map((i) => marbles[i].groupId).whereType<int>().fold<int>(
+      _generateGroupId(),
+          (prev, val) => min(prev, val),
+    );
 
-    final oldCenter = _calculateGroupCenter(_getMarblesByGroup(groupId));
+    for (var i in connected) {
+      marbles[i].groupId = groupId;
+    }
+
+    final group = marbles.asMap().entries.where((e) => e.value.groupId == groupId).toList();
+    final oldCenter = _averageOffset(group.map((e) => e.value.position));
     final anchorOffset = marble.position - oldCenter;
 
-    rearrangeGroup(groupId);
+    final positions = _generateGridPositions(group.length, oldCenter);
+    for (int i = 0; i < group.length; i++) {
+      marbles[group[i].key].position = positions[i];
+    }
 
-    final newCenter = _calculateGroupCenter(_getMarblesByGroup(groupId));
-    final draggedMarbleNewPos = newCenter + anchorOffset;
-    final delta = newPosition - draggedMarbleNewPos;
+    final newCenter = _averageOffset(group.map((e) => e.value.position));
+    final delta = newPosition - (newCenter + anchorOffset);
 
-    _moveGroup(groupId, delta);
+    for (final entry in group) {
+      marbles[entry.key].position += delta;
+    }
 
-    _draggingGroup = _getMarblesByGroup(groupId);
+    _draggingGroup = group;
     marbles.refresh();
   }
 
   void endDrag() {
     if (_draggingGroup != null) {
-      rearrangeGroup(_draggingGroup!.first.value.groupId!);
+      final groupId = _draggingGroup!.first.value.groupId!;
+      final group = marbles.asMap().entries.where((e) => e.value.groupId == groupId).toList();
+      final center = _averageOffset(group.map((e) => e.value.position));
+      final positions = _generateGridPositions(group.length, center);
+      for (int i = 0; i < group.length; i++) {
+        marbles[group[i].key].position = positions[i];
+      }
       _draggingGroup = null;
+      marbles.refresh();
     }
   }
 
-  int _mergeGroups(List<int> indices) {
-    final groupIds = indices
-        .map((i) => marbles[i].groupId)
-        .whereType<int>()
-        .toSet();
-    final groupId = groupIds.isNotEmpty
-        ? groupIds.reduce(min)
-        : _generateGroupId();
-    for (var i in indices) {
-      marbles[i].groupId = groupId;
+  List<int> _findConnectedMarbles(int index) {
+    final visited = <int>{};
+    final queue = <int>[index];
+
+    while (queue.isNotEmpty) {
+      final current = queue.removeLast();
+      if (!visited.add(current)) continue;
+
+      for (int i = 0; i < marbles.length; i++) {
+        if (i != current && !visited.contains(i)) {
+          final distance = (marbles[i].position - marbles[current].position).distance;
+          if (distance <= marbleSize) queue.add(i);
+        }
+      }
     }
-    return groupId;
+
+    return visited.toList();
   }
 
-  void _moveGroup(int groupId, Offset delta) {
-    for (final entry in _getMarblesByGroup(groupId)) {
-      marbles[entry.key].position += delta;
-    }
-  }
-
-  void rearrangeGroup(int groupId) {
-    final groupMarbles = _getMarblesByGroup(groupId);
-    if (groupMarbles.length <= 1) return;
-
-    final center = _calculateGroupCenter(groupMarbles);
-    final positions = _generateRearrangedPositions(groupMarbles.length, center);
-
-    for (int i = 0; i < groupMarbles.length; i++) {
-      marbles[groupMarbles[i].key].position = positions[i];
-    }
-  }
-
-  List<MapEntry<int, MarbleModel>> _getMarblesByGroup(int groupId) {
-    return marbles
-        .asMap()
-        .entries
-        .where((e) => e.value.groupId == groupId)
-        .toList();
-  }
-
-  Offset _calculateGroupCenter(List<MapEntry<int, MarbleModel>> group) {
-    final sum = group.map((e) => e.value.position).reduce((a, b) => a + b);
-    return sum / group.length.toDouble();
-  }
-
-  List<Offset> _generateRearrangedPositions(int count, Offset center) {
-    if (count == 2) {
-      return [
-        center.translate(-spacing / 2, 0),
-        center.translate(spacing / 2, 0),
-      ];
-    } else if (count == 3) {
-      return [
-        center.translate(-spacing / 2, spacing / 2),
-        center.translate(spacing / 2, spacing / 2),
-        center.translate(0, -spacing / 1.5),
-      ];
-    } else if (count == 4) {
-      return [
-        center.translate(-spacing / 2, -spacing / 2),
-        center.translate(spacing / 2, -spacing / 2),
-        center.translate(-spacing / 2, spacing / 2),
-        center.translate(spacing / 2, spacing / 2),
-      ];
-    } else {
-      return _generateGridPositions(count, center, spacing);
-    }
-  }
-
-  List<Offset> _generateGridPositions(
-    int count,
-    Offset center,
-    double spacing,
-  ) {
-    final cols = (count <= 2) ? count : (count / 2.0).ceil();
+  List<Offset> _generateGridPositions(int count, Offset center) {
+    final cols = (count <= 2) ? count : (count / 2).ceil();
     final rows = (count <= 2) ? 1 : 2;
+
     return List.generate(count, (i) {
       final row = i ~/ cols;
       final col = i % cols;
@@ -158,24 +119,11 @@ class MarbleController extends GetxController {
     });
   }
 
-  List<int> _findConnectedMarbles(int index) {
-    final touched = <int>{};
-    final toVisit = <int>[index];
-
-    while (toVisit.isNotEmpty) {
-      final current = toVisit.removeLast();
-      if (!touched.add(current)) continue;
-
-      for (int i = 0; i < marbles.length; i++) {
-        if (i == current || touched.contains(i)) continue;
-        final distance =
-            (marbles[i].position - marbles[current].position).distance;
-        if (distance <= marbleSize) toVisit.add(i);
-      }
-    }
-
-    return touched.toList();
+  Offset _averageOffset(Iterable<Offset> offsets) {
+    final sum = offsets.reduce((a, b) => a + b);
+    return sum / offsets.length.toDouble();
   }
 
   int _generateGroupId() => _groupCounter++;
 }
+

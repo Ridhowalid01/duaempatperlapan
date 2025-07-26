@@ -11,8 +11,8 @@ class DragAndDropAreaWidget extends StatelessWidget {
     return const Expanded(
       flex: 3,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 20,
+        mainAxisAlignment: MainAxisAlignment.start,
+        spacing: 15,
         children: [CardOnEdgeWidget(), MarblesAreaWidget()],
       ),
     );

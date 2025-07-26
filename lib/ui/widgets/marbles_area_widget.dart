@@ -1,60 +1,69 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../controllers/marble_controller.dart';
 
 class MarblesAreaWidget extends StatelessWidget {
   const MarblesAreaWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final random = Random();
-    const int count = 24;
-    const double size = 35;
-    const double minDistance = 45;
+    final MarbleController controller = Get.put(MarbleController());
 
     return Expanded(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final maxWidth = constraints.maxWidth;
-          final maxHeight = constraints.maxHeight;
-
-          List<Offset> positions = [];
-
-          int tries = 0;
-
-          while (positions.length < count && tries < 10000) {
-            final left = random.nextDouble() * (maxWidth - size);
-            final top = random.nextDouble() * (maxHeight - size);
-            final candidate = Offset(left, top);
-
-            // Cek apakah posisi ini cukup jauh dari semua posisi yang sudah ada
-            bool hasCollision = positions.any(
-              (other) => (candidate - other).distance < minDistance,
+          if (controller.marbles.isEmpty) {
+            controller.generateRandomMarbles(
+              count: 24,
+              maxWidth: constraints.maxWidth,
+              maxHeight: constraints.maxHeight,
             );
-
-            if (!hasCollision) {
-              positions.add(candidate);
-            }
-
-            tries++;
           }
 
-          return Stack(
-            children: positions.map((offset) {
-              return Positioned(
-                left: offset.dx,
-                top: offset.dy,
-                child: Container(
-                  width: size,
-                  height: size,
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.black),
+          return Obx(() {
+            return Stack(
+              children: List.generate(controller.marbles.length, (index) {
+                final marble = controller.marbles[index];
+
+                return Positioned(
+                  left: marble.position.dx,
+                  top: marble.position.dy,
+                  child: GestureDetector(
+                    onPanUpdate: (details) {
+                      final newPos = marble.position + details.delta;
+
+                      final clampedX = newPos.dx.clamp(
+                        0.0,
+                        constraints.maxWidth - 35.0,
+                      ).toDouble();
+                      final clampedY = newPos.dy.clamp(
+                        0.0,
+                        constraints.maxHeight - 35.0,
+                      ).toDouble();
+
+                      controller.updatePosition(
+                        index,
+                        Offset(clampedX, clampedY),
+                      );
+                    },
+                    onPanEnd: (_) {
+                      controller.endDrag();
+                    },
+                    child: Container(
+                      width: 35,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.black),
+                      ),
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
-          );
+                );
+              }),
+            );
+          });
         },
       ),
     );

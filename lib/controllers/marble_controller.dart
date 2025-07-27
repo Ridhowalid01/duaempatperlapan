@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../models/color_card_area.dart';
 import '../models/marble_model.dart';
 
 class MarbleController extends GetxController {
@@ -95,12 +96,20 @@ class MarbleController extends GetxController {
       final topMost = group.map((e) => e.value.position.dy).reduce(math.min);
       final touchPoint = Offset(leftMost, topMost);
 
+      bool isInCard = false;
       for (final area in colorCardAreas) {
         if (area.rect.contains(touchPoint)) {
           for (final entry in group) {
             marbles[entry.key].color = area.color;
           }
+          isInCard = true;
           break;
+        }
+      }
+
+      if (!isInCard) {
+        for (final entry in group) {
+          marbles[entry.key].color = marbles[entry.key].defaultColor;
         }
       }
 
@@ -161,21 +170,9 @@ class MarbleController extends GetxController {
     ColorCardArea(color: Colors.cyan, rect: Rect.zero),
   ];
 
-  // dipanggil saat layout selesai
   void updateCardRect(int index, Rect rect) {
     if (index >= 0 && index < colorCardAreas.length) {
       colorCardAreas[index] = colorCardAreas[index].copyWith(rect: rect);
     }
-  }
-}
-
-class ColorCardArea {
-  final Color color;
-  final Rect rect;
-
-  const ColorCardArea({required this.color, required this.rect});
-
-  ColorCardArea copyWith({Color? color, Rect? rect}) {
-    return ColorCardArea(color: color ?? this.color, rect: rect ?? this.rect);
   }
 }

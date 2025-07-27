@@ -8,9 +8,7 @@ class MarblesAreaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final MarbleController controller = Get.put(MarbleController());
     final MarbleController controller = Get.put(MarbleController());
-
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -34,14 +32,12 @@ class MarblesAreaWidget extends StatelessWidget {
                   onPanUpdate: (details) {
                     final newPos = marble.position + details.delta;
 
-                    final clampedX = newPos.dx.clamp(
-                      0.0,
-                      constraints.maxWidth - 35.0,
-                    ).toDouble();
-                    final clampedY = newPos.dy.clamp(
-                      0.0,
-                      constraints.maxHeight - 35.0,
-                    ).toDouble();
+                    final clampedX = newPos.dx
+                        .clamp(0.0, constraints.maxWidth - 35.0)
+                        .toDouble();
+                    final clampedY = newPos.dy
+                        .clamp(0.0, constraints.maxHeight - 35.0)
+                        .toDouble();
 
                     controller.updatePosition(
                       index,

@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -90,10 +91,12 @@ class MarbleController extends GetxController {
           .where((e) => e.value.groupId == groupId)
           .toList();
 
-      final center = _averageOffset(group.map((e) => e.value.position));
+      final leftMost = group.map((e) => e.value.position.dx).reduce(math.min);
+      final topMost = group.map((e) => e.value.position.dy).reduce(math.min);
+      final touchPoint = Offset(leftMost, topMost);
 
       for (final area in colorCardAreas) {
-        if (area.rect.contains(center)) {
+        if (area.rect.contains(touchPoint)) {
           for (final entry in group) {
             marbles[entry.key].color = area.color;
           }
@@ -101,6 +104,7 @@ class MarbleController extends GetxController {
         }
       }
 
+      final center = _averageOffset(group.map((e) => e.value.position));
       final positions = _generateGridPositions(group.length, center);
       for (int i = 0; i < group.length; i++) {
         marbles[group[i].key].position = positions[i];

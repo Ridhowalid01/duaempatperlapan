@@ -15,10 +15,7 @@ class QuestionBoxWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.deepPurple[300],
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: Colors.deepPurple,
-                width: 3,
-              ),
+              border: Border.all(color: Colors.deepPurple, width: 3),
               boxShadow: [
                 BoxShadow(
                   color: Colors.deepPurple,
@@ -53,10 +50,7 @@ class QuestionBoxWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.deepPurple[300],
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: Colors.deepPurple,
-                    width: 3,
-                  ),
+                  border: Border.all(color: Colors.deepPurple, width: 3),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.deepPurple,

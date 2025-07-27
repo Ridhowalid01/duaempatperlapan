@@ -12,13 +12,15 @@ class MarblesAreaWidget extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (controller.marbles.isEmpty) {
-          controller.generateRandomMarbles(
-            count: 24,
-            maxWidth: constraints.maxWidth,
-            maxHeight: constraints.maxHeight,
-          );
-        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (constraints.maxWidth > 0 && constraints.maxHeight > 0 && controller.marbles.isEmpty) {
+            controller.generateRandomMarbles(
+              count: 24,
+              maxWidth: constraints.maxWidth,
+              maxHeight: constraints.maxHeight,
+            );
+          }
+        });
 
         return Obx(() {
           return Stack(

@@ -8,7 +8,9 @@ class MarblesAreaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // final MarbleController controller = Get.put(MarbleController());
     final MarbleController controller = Get.put(MarbleController());
+
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -53,7 +55,7 @@ class MarblesAreaWidget extends StatelessWidget {
                     width: 35,
                     height: 35,
                     decoration: BoxDecoration(
-                      color: Colors.deepPurple,
+                      color: marble.color,
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.black),
                     ),

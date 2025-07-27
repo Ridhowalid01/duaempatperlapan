@@ -25,11 +25,15 @@ class MarbleController extends GetxController {
     int tries = 0;
 
     while (positions.length < count && tries < 10000) {
-      final dx = leftPadding + random.nextDouble() * (maxWidth - leftPadding - marbleSize);
+      final dx =
+          leftPadding +
+          random.nextDouble() * (maxWidth - leftPadding - marbleSize);
       final dy = random.nextDouble() * (maxHeight - marbleSize);
       final candidate = Offset(dx, dy);
 
-      if (positions.every((other) => (candidate - other).distance >= minDistance)) {
+      if (positions.every(
+        (other) => (candidate - other).distance >= minDistance,
+      )) {
         positions.add(candidate);
       }
 
@@ -44,16 +48,20 @@ class MarbleController extends GetxController {
   void updatePosition(int index, Offset newPosition) {
     final marble = marbles[index];
     final connected = _findConnectedMarbles(index);
-    final groupId = connected.map((i) => marbles[i].groupId).whereType<int>().fold<int>(
-      _generateGroupId(),
-          (prev, val) => min(prev, val),
-    );
+    final groupId = connected
+        .map((i) => marbles[i].groupId)
+        .whereType<int>()
+        .fold<int>(_generateGroupId(), (prev, val) => min(prev, val));
 
     for (var i in connected) {
       marbles[i].groupId = groupId;
     }
 
-    final group = marbles.asMap().entries.where((e) => e.value.groupId == groupId).toList();
+    final group = marbles
+        .asMap()
+        .entries
+        .where((e) => e.value.groupId == groupId)
+        .toList();
     final oldCenter = _averageOffset(group.map((e) => e.value.position));
     final anchorOffset = marble.position - oldCenter;
 
@@ -76,12 +84,28 @@ class MarbleController extends GetxController {
   void endDrag() {
     if (_draggingGroup != null) {
       final groupId = _draggingGroup!.first.value.groupId!;
-      final group = marbles.asMap().entries.where((e) => e.value.groupId == groupId).toList();
+      final group = marbles
+          .asMap()
+          .entries
+          .where((e) => e.value.groupId == groupId)
+          .toList();
+
       final center = _averageOffset(group.map((e) => e.value.position));
+
+      for (final area in colorCardAreas) {
+        if (area.rect.contains(center)) {
+          for (final entry in group) {
+            marbles[entry.key].color = area.color;
+          }
+          break;
+        }
+      }
+
       final positions = _generateGridPositions(group.length, center);
       for (int i = 0; i < group.length; i++) {
         marbles[group[i].key].position = positions[i];
       }
+
       _draggingGroup = null;
       marbles.refresh();
     }
@@ -97,7 +121,8 @@ class MarbleController extends GetxController {
 
       for (int i = 0; i < marbles.length; i++) {
         if (i != current && !visited.contains(i)) {
-          final distance = (marbles[i].position - marbles[current].position).distance;
+          final distance =
+              (marbles[i].position - marbles[current].position).distance;
           if (distance <= marbleSize) queue.add(i);
         }
       }
@@ -125,5 +150,28 @@ class MarbleController extends GetxController {
   }
 
   int _generateGroupId() => _groupCounter++;
+
+  final List<ColorCardArea> colorCardAreas = [
+    ColorCardArea(color: Colors.orange, rect: Rect.zero),
+    ColorCardArea(color: Colors.yellow, rect: Rect.zero),
+    ColorCardArea(color: Colors.cyan, rect: Rect.zero),
+  ];
+
+  // dipanggil saat layout selesai
+  void updateCardRect(int index, Rect rect) {
+    if (index >= 0 && index < colorCardAreas.length) {
+      colorCardAreas[index] = colorCardAreas[index].copyWith(rect: rect);
+    }
+  }
 }
 
+class ColorCardArea {
+  final Color color;
+  final Rect rect;
+
+  const ColorCardArea({required this.color, required this.rect});
+
+  ColorCardArea copyWith({Color? color, Rect? rect}) {
+    return ColorCardArea(color: color ?? this.color, rect: rect ?? this.rect);
+  }
+}

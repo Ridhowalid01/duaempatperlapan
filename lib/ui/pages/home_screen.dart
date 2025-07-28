@@ -4,6 +4,7 @@ import 'package:duaempatperlapan/ui/widgets/question_desc_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/drag_and_drop_area_widget.dart';
+import '../widgets/restart_button.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -27,7 +28,14 @@ class HomeScreen extends StatelessWidget {
               QuestionBoxWidget(),
               SizedBox(height: 10),
               DragAndDropAreaWidget(),
-              CheckAnswerButton(),
+              Row(
+                spacing: 20,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CheckAnswerButton(),
+                  RestartButton(),
+                ],
+              ),
             ],
           ),
         ),

@@ -19,6 +19,9 @@ class MarblesAreaWidget extends StatelessWidget {
               maxWidth: constraints.maxWidth,
               maxHeight: constraints.maxHeight,
             );
+            controller.updateDragAreaSize(
+              Size(constraints.maxWidth, constraints.maxHeight),
+            );
           }
         });
 

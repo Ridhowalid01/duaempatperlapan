@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controllers/marble_controller.dart';
+import 'card_area_overlay_widget.dart';
 import 'card_on_edge_widget.dart';
 
 class DragAndDropAreaWidget extends StatelessWidget {
@@ -16,6 +17,7 @@ class DragAndDropAreaWidget extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(left: 0, top: 0, bottom: 0, child: CardOnEdgeWidget()),
+          // const CardAreasOverlayWidget(), // untuk debugging saja
           Positioned.fill(child: MarblesAreaWidget()),
         ],
       ),

@@ -8,7 +8,7 @@ class MarblesAreaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MarbleController controller = Get.put(MarbleController());
+    final controller = Get.find<MarbleController>();
 
     return LayoutBuilder(
       builder: (context, constraints) {

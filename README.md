@@ -1,6 +1,6 @@
 # duaempatperlapan
 
-A new Flutter project.
+Studyo.io selection intern project.
 
 ## Getting Started
 

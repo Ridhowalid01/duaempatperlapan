@@ -1,5 +1,5 @@
-## 🎮 Marble Sort Game
-An interactive Flutter application for sorting marbles into designated color card zones. Ideal for UI experimentation involving drag-and-drop and spatial evaluation.
+## 🎮 Marble Sort & Count Game
+A drag-and-drop game to sort and evaluate marbles by color and quantity.
 
 ---
 
@@ -21,10 +21,12 @@ flutter run
 ```
 ---
 
-## 🎬 Demo
-<video src="video_demo.mp4" controls width="600">
-</video>
+## 📸 Screenshot
 
-You can watch the demo video here: https://drive.google.com/file/d/1-ymRbIo2XGL9ASamkI7RPjUlpBb6I4TF/view
+
+## 🎬 Demo
+[![App Demo](https://img.youtube.com/vi/-uurkq0oAB8/0.jpg)](https://www.youtube.com/watch?v=-uurkq0oAB8)
+
+You can watch the demo video here: https://youtu.be/-uurkq0oAB8
 
 You can watch the presentation video here: https://drive.google.com/file/d/17iYVkJbEFsRmuAtA4bDVClAe87lFrik9/view

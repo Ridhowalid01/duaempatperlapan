@@ -46,7 +46,7 @@ class CheckAnswerButton extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 50,
+              horizontal: 20,
               vertical: 8,
             ),
             child: Text(

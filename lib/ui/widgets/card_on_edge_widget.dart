@@ -18,21 +18,17 @@ class CardOnEdgeWidget extends StatelessWidget {
           }
         });
 
-        return Obx(
-          () => Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(3, (i) {
-              final cardArea = controller.colorCardAreas[i];
-              final colors = _getCardColors(i);
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(3, (i) {
+            final colors = _getCardColors(i);
 
-              return _buildColorCard(
-                index: i,
-                mainColor: colors[0],
-                shadowColor: colors[1],
-                currentColor: cardArea.color,
-              );
-            }),
-          ),
+            return _buildColorCard(
+              index: i,
+              mainColor: colors[0],
+              shadowColor: colors[1],
+            );
+          }),
         );
       },
     );
@@ -60,7 +56,6 @@ class CardOnEdgeWidget extends StatelessWidget {
       ),
     ];
 
-    // Update card rectangles in controller
     for (int i = 0; i < positions.length; i++) {
       controller.updateCardRect(i, positions[i]);
     }
@@ -83,7 +78,6 @@ class CardOnEdgeWidget extends StatelessWidget {
     required int index,
     required Color mainColor,
     required Color shadowColor,
-    required Color currentColor,
   }) {
     return Container(
       width: 50,

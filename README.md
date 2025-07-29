@@ -23,6 +23,13 @@ flutter run
 
 ## 📸 Screenshot
 
+<p align="center">
+  <img src="ss_initial.png" width="30%" />
+  <img src="ss_incorrect_count.png" width="30%" />
+  <img src="ss_correct)count.png" width="30%" />
+</p>
+
+---
 
 ## 🎬 Demo
 [![App Demo](https://img.youtube.com/vi/-uurkq0oAB8/0.jpg)](https://www.youtube.com/watch?v=-uurkq0oAB8)
@@ -30,3 +37,5 @@ flutter run
 You can watch the demo video here: https://youtu.be/-uurkq0oAB8
 
 You can watch the presentation video here: https://drive.google.com/file/d/17iYVkJbEFsRmuAtA4bDVClAe87lFrik9/view
+
+---

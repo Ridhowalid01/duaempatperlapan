@@ -22,6 +22,9 @@ flutter run
 ---
 
 ## 🎬 Demo
+<video src="video_demo.mp4" controls width="600">
+</video>
+
 You can watch the demo video here: https://drive.google.com/file/d/1-ymRbIo2XGL9ASamkI7RPjUlpBb6I4TF/view
 
 You can watch the presentation video here: https://drive.google.com/file/d/17iYVkJbEFsRmuAtA4bDVClAe87lFrik9/view
